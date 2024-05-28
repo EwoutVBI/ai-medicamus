@@ -4,12 +4,14 @@
     <title>Welke vraag wil je stellen aan de data?</title>
 </head>
 <body class="background-image">
-    <h2>Inclusie & exclusie app</h2>
-    <form action="/submit" method="POST">
-        <label for="user_prompt">Vraag:</label><br>
-        <input type="text" id="user_prompt" name="user_prompt"><br><br>
-        <input type="submit" value="Uitvoeren">
-    </form>
+    <div class="center-form">
+        <h2>Inclusie & exclusie app</h2>
+        <form action="/submit" method="POST">
+            <label for="user_prompt">Vraag:</label><br>
+            <input type="text" id="user_prompt" name="user_prompt"><br><br>
+            <input type="submit" value="Uitvoeren">
+        </form>
+    </div>
 </body>
 <style>
     .background-image {
@@ -30,6 +32,15 @@
             background-size: cover;
             opacity: 0.7; /* 70% opacity */
             z-index: -1;
+    }
+    .center-form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+    form {
+            text-align: center;
     }
 
 </style> 
