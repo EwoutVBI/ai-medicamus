@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing Query</title>
+</head>
+<body>
+    <h2>Processing Query</h2>
+    <form action="/query" method="POST">
+        <input type="hidden" name="user_prompt" value="{{ user_prompt }}">
+        <input type="submit" value="Submit Query">
+    </form>
+    <script>
+        document.forms[0].submit();
+    </script>
+</body>
+</html>

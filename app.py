@@ -1,4 +1,3 @@
-from urllib.parse import quote as url_quote
 from flask import Flask, request, jsonify, render_template
 from openai import OpenAI
 import os
@@ -20,27 +19,26 @@ def index():
 def submit():
     user_prompt = request.form['user_prompt']
     # Process the input (e.g., save to database)
-    return user_prompt
+    return render_template('query.html', user_prompt=user_prompt)
 
-user_question = submit()
 # Function to query the OpenAI API
-def ask_openai(my_client):
+def ask_openai(my_client, user_question):
     response = my_client.chat.completions.create(
-    messages=[
-        {
-            "role": "system",
-            "content": sys_prompt,
-        },
-        {
-            "role": "user",
-            "content": {user_question},
-        }
-    ],
-    model="gpt-4o",
+        messages=[
+            {
+                "role": "system",
+                "content": sys_prompt,
+            },
+            {
+                "role": "user",
+                "content": user_question,
+            }
+        ],
+        model="gpt-4o"
     )
     sql = take_sql_from_response(str(response))
-
     return sql
+
 def take_sql_from_response(response):
     regex = r"SELECT .*?;"
     match = re.search(regex, response)
@@ -49,7 +47,7 @@ def take_sql_from_response(response):
         sql_query = sql_query.replace("\\n", " ")
         print(sql_query)
         return sql_query
-    
+
 # Function to execute SQL query
 def execute_query(query, db_connection):
     cursor = db_connection.cursor()
@@ -61,10 +59,10 @@ def execute_query(query, db_connection):
 # Main function
 @app.route('/query', methods=['POST'])
 def query():
-    my_client = OpenAI(
-    api_key= apiKey
-    )
-    sql_query = ask_openai(my_client)
+    user_prompt = request.form['user_prompt']
+    my_client = OpenAI(api_key=apiKey)
+    sql_query = ask_openai(my_client, user_prompt)
+    
     if sql_query:
         # Set up the connection to Azure SQL Server
         server = 'med-nep-sqlsrv-dataplatform-001.database.windows.net'
@@ -77,8 +75,9 @@ def query():
         db_connection = pyodbc.connect(connection_string)
         result = execute_query(sql_query, db_connection)
         db_connection.close()
-        # Open de resultaat pagina, en toon daar het resultaat.
-        return render_template('result.html', result=jsonify(result)) 
+        
+        # Render the result page and show the results
+        return render_template('result.html', result=result)
     else:
         return jsonify({"error": "No SQL query found."}), 400
 
