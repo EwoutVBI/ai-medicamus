@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Welke vraag wil je stellen aan de data?</title>
+    <title>Welke vraag wil je stellen?</title>
+    <!-- Mooi plaatje in de browser tab-->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/medicamusfavicon.png') }}">
     <style>
         .background-image {
             position: relative;
@@ -30,11 +32,15 @@
             height: 100vh;
             align-items: flex-start; /* Align items to the start (top) */
         }
-
-        form {
+        form{
             text-align: center;
             align-self: flex-start; /* Align form to the top */
         }
+        .center-form h2{
+            text-align: center;
+            align-self: flex-start; /* Align form to the top */
+        }
+        
     </style>
 </head>
 <body class="background-image">
