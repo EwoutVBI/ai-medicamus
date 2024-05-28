@@ -77,6 +77,7 @@ def query():
         db_connection.close()
         
         # Pyodbc geeft het antwoord als [(2,)]
+        result = str(result)
         comma_index = result.find(',')
 
         # Pak het resultaat tussen () voor de 1e komma
