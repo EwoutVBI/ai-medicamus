@@ -26,13 +26,14 @@
         .center-form {
             display: flex;
             justify-content: center;
-            align-items: flex-start;
+            /* align-items: flex-start; Remove this line */
             height: 100vh;
             flex-direction: column; /* Stack items vertically */
         }
 
         form {
             text-align: center;
+            align-self: flex-start; /* Align form to the top */
         }
     </style>
 </head>
