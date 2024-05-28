@@ -10,7 +10,16 @@
     <p>{{ result }}</p>
 
     <h2>is tot stand gekomen o.b.v. dit SQL Query: </h2>
-    <p>{{ query }}</p>
+    <!-- Special text tag that preserves whitespace etc. -->
+    <pre>{{ query }}</pre>
     <a href="/">Terug naar vraagscherm</a>
 </body>
+<style>
+    pre {
+        background-color: #f8f8f8;
+        padding: 10px;
+        border: 1px solid #ccc;
+        overflow: auto;
+    }
+</style>
 </html>
