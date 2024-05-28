@@ -85,7 +85,7 @@ def query():
         # Open de resultaatpagina
         return render_template('result.html', query=sql_query, result=result)
     else:
-        return render_template('result.html', query=sql_query, result=f"Bij de vraag    {user_prompt}    konden wij nog geen antwoord vinden, neem a.u.b. zonodig contact op met support.")
+        return render_template('result.html', query='Niet van toepassing', result=f"Bij de vraag    {user_prompt}    konden wij nog geen antwoord vinden, neem a.u.b. zonodig contact op met support.")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
