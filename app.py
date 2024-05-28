@@ -3,6 +3,7 @@ from openai import OpenAI
 import os
 import pyodbc
 import re
+import sqlparse
 
 # Flask - ask question to db using OpenAI
 app = Flask(__name__)
@@ -82,8 +83,10 @@ def query():
 
         # Pak het resultaat tussen () voor de 1e komma
         result = f" Er zijn {result[result.find('(') + 1:comma_index]} patienten gevonden, die voldoen aan de vraag {user_prompt}."
+
+        formatted_sql_query = sqlparse.format(sql_query, reindent=True, keyword_case='upper')
         # Open de resultaatpagina
-        return render_template('result.html', query=sql_query, result=result)
+        return render_template('result.html', query=formatted_sql_query, result=result)
     else:
         return render_template('result.html', query='Niet van toepassing', result=f"Bij de vraag    {user_prompt}    konden wij nog geen antwoord vinden, neem a.u.b. zonodig contact op met support.")
 
