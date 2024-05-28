@@ -7,9 +7,9 @@ import re
 # Flask - ask question to db using OpenAI
 app = Flask(__name__)
 
-apiKey = os.getenv('apiKey')
-sqlPwd = os.getenv('sqlPwd')
-sys_prompt = os.getenv('prompt')
+apiKey = os.getenv('API_KEY_AI')
+sqlPwd = os.getenv('SQL_PWD_AI')
+sys_prompt = os.getenv('SYSTEM_PROMPT_AI')
 
 @app.route('/')
 def index():
