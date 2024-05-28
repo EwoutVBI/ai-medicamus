@@ -2,6 +2,39 @@
 <html>
 <head>
     <title>Welke vraag wil je stellen aan de data?</title>
+    <style>
+        .background-image {
+            position: relative;
+            width: 100%;
+            height: 500px; /* Adjust as needed */
+            overflow: hidden;
+        }
+
+        .background-image:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("{{ url_for('static', filename='img/medicamusbanner.png') }}") no-repeat center center;
+            background-size: cover;
+            opacity: 0.7; /* 70% opacity */
+            z-index: -1;
+        }
+
+        .center-form {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            flex-direction: column; /* Stack items vertically */
+        }
+
+        form {
+            text-align: center;
+        }
+    </style>
 </head>
 <body class="background-image">
     <div class="center-form">
@@ -13,35 +46,4 @@
         </form>
     </div>
 </body>
-<style>
-    .background-image {
-            position: relative;
-            width: 100%;
-            height: 500px; /* Adjust as needed */
-            overflow: hidden;
-    }
-
-    .background-image:before {
-            content: "";
-            position: absolute;
-            top: 100;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url("{{ url_for('static', filename='img/medicamusbanner.png') }}") no-repeat center center;
-            background-size: cover;
-            opacity: 0.7; /* 70% opacity */
-            z-index: -1;
-    }
-    .center-form {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            height: 100vh;
-        }
-    form {
-            text-align: center;
-    }
-
-</style> 
 </html>
