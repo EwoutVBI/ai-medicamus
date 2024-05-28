@@ -26,21 +26,23 @@
         }
 
         .center-form {
-            position: relative; /* Ensure relative positioning for absolute centering */
+            position: relative;
             display: flex;
-            justify-content: center;
+            flex-direction: column; /* Stack children vertically */
+            justify-content: flex-start; /* Align items to the top */
+            align-items: center; /* Center items horizontally */
             height: 100vh;
-            align-items: flex-start; /* Align items to the start (top) */
+            text-align: center; /* Center text within the container */
         }
-        form{
-            text-align: center;
-            align-self: flex-start; /* Align form to the top */
+
+        .center-form h2, .center-form form {
+            width: 100%; /* Ensure elements take up full width for centering */
         }
-        .center-form h2{
-            text-align: center;
-            align-self: flex-start; /* Align form to the top */
+
+        form {
+            margin-top: 10px; /* Add some space between the <h2> and <form> */
         }
-        
+
     </style>
 </head>
 <body class="background-image">
