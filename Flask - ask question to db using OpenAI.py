@@ -1,4 +1,4 @@
-from werkzeug.utils import url_quote
+from urllib.parse import quote as url_quote
 from flask import Flask, request, jsonify
 from openai import OpenAI
 import os
