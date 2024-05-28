@@ -77,9 +77,9 @@ def query():
         db_connection.close()
         
         # Render the result page and show the results
-        return render_template('result.html', result=result)
+        return render_template('result.html', query=sql_query, result=result)
     else:
-        return jsonify({"error": "No SQL query found."}), 400
+        return render_template('result.html', query=sql_query, result="Bij deze vraag konden wij nog geen antwoord vinden, neem a.u.b. contact op met support.")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
