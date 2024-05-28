@@ -64,7 +64,7 @@ def query():
     sql_query = ask_openai(my_client, user_prompt)
     
     if sql_query:
-        # Set up the connection to Azure SQL Server
+        # Maak de verbinding met Azure SQL Server
         server = 'med-nep-sqlsrv-dataplatform-001.database.windows.net'
         database = 'med-nep-sqldb-dataplatform-001'
         username = 'aiuser'
@@ -76,10 +76,15 @@ def query():
         result = execute_query(sql_query, db_connection)
         db_connection.close()
         
-        # Render the result page and show the results
+        # Pyodbc geeft het antwoord als [(2,)]
+        comma_index = result.find(',')
+
+        # Pak het resultaat tussen () voor de 1e komma
+        result = f" Er zijn {result[result.find('(') + 1:comma_index]} patienten gevonden, die voldoen aan de vraag {user_prompt}."
+        # Open de resultaatpagina
         return render_template('result.html', query=sql_query, result=result)
     else:
-        return render_template('result.html', query=sql_query, result="Bij deze vraag konden wij nog geen antwoord vinden, neem a.u.b. contact op met support.")
+        return render_template('result.html', query=sql_query, result=f"Bij de vraag    {user_prompt}    konden wij nog geen antwoord vinden, neem a.u.b. zonodig contact op met support.")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
