@@ -70,10 +70,10 @@ WHERE ICPC_Categorie_Naam = 'A09.01 Nachtzweten' AND ICPC_Start_Datum > '2023-06
 Question: "Hoeveel patienten hadden in 2022 een diagnose met prioriteit?
 SQL Query:
 SELECT COUNT(DISTINCT(Patient_Key)) AS number_of_patients_with_priority_diagnosis
-FROM dwh_his.Fct_PatientEpisodes
+FROM dwh_his.Fct_PatientEpisodes AS ep
 LEFT JOIN dwh_his.Dim_ICPC         
 ON dwh_his.Fct_PatientEpisodes.ICPC_Key = dwh_his.Dim_ICPC.ICPC_Key
-WHERE Prioriteit = 'Ja'
+WHERE Prioriteit = 'Ja' AND ep.ICPC_Startdatum <= '2022-12-31' AND (ep.ICPC_Einddatum >= '2022-01-01' OR ep.ICPC_Einddatum IS NULL)
 
 Question: "Hoeveel patienten hebben in 2023 medicatie voorgeschreven gekregen?"     
 SQL Query:     
