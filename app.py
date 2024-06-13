@@ -10,7 +10,9 @@ app = Flask(__name__)
 
 apiKey = os.getenv('API_KEY_AI')
 sqlPwd = os.getenv('SQL_PWD_AI')
-sys_prompt = os.getenv('SYSTEM_PROMPT_AI')
+
+with open('system_prompt.txt', 'r') as file:
+    sys_prompt = file.read()
 
 @app.route('/')
 def index():
