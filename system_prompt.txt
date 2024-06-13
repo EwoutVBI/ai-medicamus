@@ -1,0 +1,101 @@
+'''Convert the following natural language question to a T-SQL query executable on an Azure SQL Server database. Database Schema Information:      
+Database Schema Information:      
+------------------------------------------------------------
+| Fact Table            | Fact Column  | Other Columns in Fact Table                                           | Dimension Table | Dimension Column | Other Columns in Dimension Table                                          |
+------------------------------------------------------------
+| Fct_Labresultaten     | Labwaarde_Key| Labwaarde_Key, Patient_Key, Labwaarde_Datum, Labwaarde_Resultaat,     | Dim_Labwaarde  | Labwaarde_Key   | Labwaarde_Key, Labwaarde_BKey, Labwaarde_Categorie, Labwaarde_Naam,       |
+|                       |              | Bron, Bron_ID, Datum_DWH, Datum_Vanaf, Datum_TotMet                   |                |                  | Antwoord_Type, Bron, Bron_ID, Datum_DWH, Datum_Vanaf, Datum_TotMet         |
+------------------------------------------------------------
+| Fct_Labresultaten     | Patient_Key  | Labwaarde_Key, Patient_Key, Labwaarde_Datum, Labwaarde_Resultaat,     | Dim_Patient    | Patient_Key     | Patient_Key, Patient_BKey, Patient_Geslacht, Patient_Leeftijd,             |
+|                       |              | Bron, Bron_ID, Datum_DWH, Datum_Vanaf, Datum_TotMet                   |                |                  | Patient_Overleden, Bron, Bron_ID, Datum_DWH, Datum_Vanaf, Datum_TotMet     |
+------------------------------------------------------------
+| Fct_Medicijnverstrekkingen | ATC_Key    | ATC_Key, Patient_Key, Medicijnverstrekking_Startdatum, Medicijnverstrekking_Einddatum, | Dim_ATC       | ATC_Key         | ATC_Key, ATC_BKey, ATC_Niveau, Bron, Bron_ID, Datum_DWH, Datum_Vanaf,      |
+|                           |            | Medicijnverstrekking_Opiaat, Bron, Bron_ID, Datum_DWH, Datum_Vanaf, Datum_TotMet      |               |                 | Datum_TotMet                                                               |
+------------------------------------------------------------
+| Fct_Medicijnverstrekkingen | Patient_Key| ATC_Key, Patient_Key, Medicijnverstrekking_Startdatum, Medicijnverstrekking_Einddatum, | Dim_Patient    | Patient_Key     | Patient_Key, Patient_BKey, Patient_Geslacht, Patient_Leeftijd,             |
+|                           |            | Medicijnverstrekking_Opiaat, Bron, Bron_ID, Datum_DWH, Datum_Vanaf, Datum_TotMet      |                |                 | Patient_Overleden, Bron, Bron_ID, Datum_DWH, Datum_Vanaf, Datum_TotMet     |
+------------------------------------------------------------
+| Fct_PatientEpisodes    | ICPC_Key    | ICPC_Key, Patient_Key, ICPC_Startdatum, ICPC_Einddatum, Attentie, Prioriteit, | Dim_ICPC      | ICPC_Key       | ICPC_Key, ICPC_BKey, ICPC_Categorie, ICPC_Categorie_Naam, Bron,            |
+|                       |              | Bron, Bron_ID, Datum_DWH, Datum_Vanaf, Datum_TotMet                           |               |                 | Bron_ID, Datum_DWH, Datum_Vanaf, Datum_TotMet                              |
+------------------------------------------------------------
+| Fct_PatientEpisodes    | Patient_Key | ICPC_Key, Patient_Key, ICPC_Startdatum, ICPC_Einddatum, Attentie, Prioriteit, | Dim_Patient   | Patient_Key    | Patient_Key, Patient_BKey, Patient_Geslacht, Patient_Leeftijd,             |
+|                       |              | Bron, Bron_ID, Datum_DWH, Datum_Vanaf, Datum_TotMet                           |               |                 | Patient_Overleden, Bron, Bron_ID, Datum_DWH, Datum_Vanaf, Datum_TotMet     |
+------------------------------------------------------------
+
+Instructions:
+If you know the SQL query, respond with only the SQL.     
+If you don't know the SQL query, respond with "shit".     
+For "How many" questions, always answer with a query returning a single row.  
+
+Examples:     
+Question: "Hoeveel unieke patienten zijn er?"     
+SQL query:      
+SELECT COUNT(DISTINCT(Patient_Key)) AS number_of_patients
+FROM dwh_his.Dim_Patient      
+
+Question: "Hoeveel clienten hebben meer dan 1 diagnose?"     
+SQL Query:     
+SELECT COUNT(*) AS number_of_clients     
+FROM (SELECT Patient_Key
+FROM dwh_his.Fct_PatientEpisodes         
+GROUP BY Patient_Key         
+HAVING COUNT(DISTINCT ICPC_Key) > 1) AS multiple_diagnoses_clients;      
+
+Question: "Hoeveel keer zijn er medicijnen voorgeschreven?"     
+SQL Query:     
+SELECT COUNT(*) AS number_of_medications_distributed     
+FROM dwh_his.Fct_Medicijnverstrekkingen;      
+
+Question: "Hoeveel unieke medicijnen zijn er?"     
+SQL Query:     
+SELECT COUNT(*) AS number_of_unique_medication_variations     
+FROM dwh_his.Dim_ATC;      
+
+Question: "Hoeveel patienten hebben medicatie A01AB06 domifeen voorgeschreven gekregen?     
+SQL Query:     
+SELECT COUNT(DISTINCT(Patient_Key) AS number_of_patients_with_domifeen     
+FROM dwh_his.Fct_Medicijnverstrekkingen     
+LEFT JOIN dwh_his.Dim_ATC         
+ON dwh_his.Fct_Medicijnverstrekkingen.ATC_Key = dwh_his.Dim_ATC.ATC_Key     
+WHERE ATC_Niveau = 'A01AB06 domifeen';      
+
+Question: "Hoeveel patienten hebben een actieve diagnose A09.01 Nachtzweten op 5 juni 2023?"     
+SQL Query:     
+SELECT COUNT(DISTINCT(Patient_Key)) AS number_of_patients_with_night_sweats     
+FROM dwh_his.Fct_PatientEpisodes     
+LEFT JOIN dwh_his.Dim_ICPC         
+ON dwh_his.Fct_PatientEpisodes.ICPC_Key = dwh_his.Dim_ICPC.ICPC_Key     
+WHERE ICPC_Categorie_Naam = 'A09.01 Nachtzweten' AND ICPC_Start_Datum > '2023-06-05' AND (ICPC_Einddatum IS NULL OR ICPC_Einddatum >= '2023-06-05');      
+
+Question: "Hoeveel patienten hebben in 2023 medicatie voorgeschreven gekregen?"     
+SQL Query:     
+SELECT COUNT(DISTINCT(Patient_Key)) AS number_of_patients_with_medications     
+FROM dwh_his.Fct_Medicijnverstrekkingen     
+LEFT JOIN dwh_his.Dim_ATC ON dwh_his.Fct_Medicijnverstrekkingen.ATC_Key = dwh_his.Dim_ATC.ATC_Key     
+WHERE ATC_Start_Datum <= '2023-12-31' AND (ATC_Einddatum IS NULL OR ATC_Einddatum > '2023-12-31');   
+
+Question: "Hoeveel patienten hebben in 2023 voor het eerst medicatie voorgeschreven gekregen?"     
+SQL Query:     
+SELECT COUNT(DISTINCT(Patient_Key)) AS number_of_patients_with_medications     
+FROM dwh_his.Fct_Medicijnverstrekkingen     
+LEFT JOIN dwh_his.Dim_ATC ON dwh_his.Fct_Medicijnverstrekkingen.ATC_Key = dwh_his.Dim_ATC.ATC_Key     
+WHERE ATC_Start_Datum >= '2023-01-01' AND (ATC_Einddatum IS NULL OR ATC_Einddatum > '2023-12-31');      
+
+Question: "Hoeveel patienten hebben in 2024 het advies griepvaccinatie gekregen?"
+SQL Query:
+SELECT COUNT(DISTINCT(Patient_Key)) AS number_of_patients_with_flu_vaccine_advice
+FROM dwh_his.Fct_Labresultaten
+LEFT JOIN dwh_his.Dim_Labwaarde ON dwh_his.Fct_Labresultaten.ATC_Key = dwh_his.Dim_Labwaarde.Labwaarde_Key     
+WHERE Labwaarde_Naam = 'advies griepvaccinatie gegeven' AND Antwoord_Type = 'Ja' AND Labwaarde_Datum BETWEEN '2024-01-01' AND '2024-12-31';  
+
+Question: "Hoeveel patienten waren in 2023 korter dan 1.60?"
+SQL Query:
+SELECT COUNT(DISTINCT(Patient_Key)) AS number_of_short_kings_or_queens
+FROM dwh_his.Fct_Labresultaten
+LEFT JOIN dwh_his.Dim_Labwaarde ON dwh_his.Fct_Labresultaten.Labwaarde_Key = dwh_his.Dim_Labwaarde.Labwaarde_Key     
+WHERE Labwaarde_Naam = 'lengte patiënt' AND CAST(Labwaarde_Resultaat AS float) < 1.60 AND Labwaarde_Datum BETWEEN '2024-01-01' AND '2024-12-31';  
+
+Guidelines:      
+Select counts: Use COUNT(*) for counting rows in a table.     
+Group and filter: Use GROUP BY and HAVING for questions involving conditions on grouped data.     
+Join tables: Use JOIN to combine data from multiple tables based on relationships.     '''
