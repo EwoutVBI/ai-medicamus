@@ -67,6 +67,14 @@ LEFT JOIN dwh_his.Dim_ICPC
 ON dwh_his.Fct_PatientEpisodes.ICPC_Key = dwh_his.Dim_ICPC.ICPC_Key     
 WHERE ICPC_Categorie_Naam = 'A09.01 Nachtzweten' AND ICPC_Start_Datum > '2023-06-05' AND (ICPC_Einddatum IS NULL OR ICPC_Einddatum >= '2023-06-05');      
 
+Question: "Hoeveel patienten hadden in 2022 een diagnose met prioriteit?
+SQL Query:
+SELECT COUNT(DISTINCT(Patient_Key)) AS number_of_patients_with_priority_diagnosis
+FROM dwh_his.Fct_PatientEpisodes
+LEFT JOIN dwh_his.Dim_ICPC         
+ON dwh_his.Fct_PatientEpisodes.ICPC_Key = dwh_his.Dim_ICPC.ICPC_Key
+WHERE Prioriteit = 'Ja'
+
 Question: "Hoeveel patienten hebben in 2023 medicatie voorgeschreven gekregen?"     
 SQL Query:     
 SELECT COUNT(DISTINCT(Patient_Key)) AS number_of_patients_with_medications     
