@@ -81,6 +81,15 @@ FROM dwh_his.Fct_Medicijnverstrekkingen
 LEFT JOIN dwh_his.Dim_ATC ON dwh_his.Fct_Medicijnverstrekkingen.ATC_Key = dwh_his.Dim_ATC.ATC_Key     
 WHERE ATC_Start_Datum >= '2023-01-01' AND (ATC_Einddatum IS NULL OR ATC_Einddatum > '2023-12-31');      
 
+Question: Hoeveel patienten hadden een diagnose in 2023, maar kregen toen geen medicatie?
+SQL Query:
+SELECT COUNT(DISTINCT ep.Patient_Key) AS number_of_patients_with_diagnosis_no_medication
+FROM dwh_his.Fct_PatientEpisodes ep
+LEFT JOIN dwh_his.Fct_Medicijnverstrekkingen mv ON ep.Patient_Key = mv.Patient_Key
+LEFT JOIN dwh_his.Dim_ICPC icpc ON ep.ICPC_Key = icpc.ICPC_Key
+WHERE ep.ICPC_Startdatum <= '2023-12-31' AND (ep.ICPC_Einddatum >= '2023-01-01' OR ep.ICPC_Einddatum IS NULL)
+  AND ((mv.Medicijnverstrekking_Startdatum < '2023-01-01' AND mv.Medicijnverstrekking_Einddatum < '2023-01-01') OR mv.Medicijnverstrekking_Startdatum > '2023-12-31') ;
+
 Question: "Hoeveel patienten hebben in 2024 het advies griepvaccinatie gekregen?"
 SQL Query:
 SELECT COUNT(DISTINCT(Patient_Key)) AS number_of_patients_with_flu_vaccine_advice
